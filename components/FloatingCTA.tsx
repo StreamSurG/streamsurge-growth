@@ -1,76 +1,64 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { ArrowRight, Sparkles, X } from "lucide-react";
 import { useState } from "react";
 
 export default function FloatingCTA() {
-  const [closed, setClosed] = useState(false);
+  const [open, setOpen] = useState(true);
 
-  if (closed) return null;
+  if (!open) return null;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 120 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-      className="fixed bottom-6 right-6 z-[999]"
-    >
-      <div className="relative w-[340px] rounded-3xl border border-purple-500/30 bg-[#090909]/95 backdrop-blur-2xl shadow-2xl">
+    <div className="fixed bottom-6 right-6 z-50 w-[380px] max-w-[95vw] rounded-3xl border border-white/10 bg-[#0b0b0b] p-8 shadow-2xl backdrop-blur-xl">
 
-        <button
-          onClick={() => setClosed(true)}
-          className="absolute right-4 top-4 text-gray-500 hover:text-white transition"
-        >
-          <X size={18} />
-        </button>
+      <button
+        onClick={() => setOpen(false)}
+        className="absolute right-5 top-5 text-gray-400 hover:text-white"
+      >
+        <X size={22} />
+      </button>
 
-        <div className="p-6">
+      <div className="flex items-center gap-4">
 
-          <div className="flex items-center gap-3">
+        <div className="rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 p-4">
 
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-r from-purple-600 to-fuchsia-600">
+          <Sparkles className="text-white" size={28} />
 
-              <Sparkles className="text-white" size={22} />
+        </div>
 
-            </div>
+        <div>
 
-            <div>
+          <h2 className="text-3xl font-black text-white">
+            Ready To Grow?
+          </h2>
 
-              <h3 className="font-bold text-white text-lg">
-                Ready To Grow?
-              </h3>
-
-              <p className="text-sm text-gray-400">
-                Your project starts immediately.
-              </p>
-
-            </div>
-
-          </div>
-
-          <p className="mt-5 text-gray-300 leading-7">
-            Start with a professional Stream Audit and discover what's holding
-            your stream back before investing in a larger package.
-          </p>
-
-          <a
-            href="https://buy.stripe.com/6oUfZhg7f9cK5Yz8lVbAs06"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-purple-600 to-fuchsia-600 px-6 py-4 font-bold text-white transition hover:scale-105"
-          >
-            Start My Project
-            <ArrowRight size={18} />
-          </a>
-
-          <p className="mt-4 text-center text-xs text-gray-500">
-            🔒 Secure payment powered by Stripe
+          <p className="text-gray-400">
+            Your project starts immediately.
           </p>
 
         </div>
 
       </div>
-    </motion.div>
+
+      <p className="mt-8 text-lg leading-9 text-gray-300">
+        Start with a professional Stream Audit and discover what's
+        holding your stream back before investing in a larger package.
+      </p>
+
+      <a
+        href="https://buy.stripe.com/test_bJeaEXbQZ88Gdr16dNbAs00"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-8 flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-8 py-5 text-xl font-bold text-white transition-all duration-300 hover:scale-105"
+      >
+        Start My Project
+        <ArrowRight size={20} />
+      </a>
+
+      <p className="mt-5 text-center text-sm text-gray-500">
+        🔒 Secure payment powered by Stripe (Sandbox)
+      </p>
+
+    </div>
   );
 }
