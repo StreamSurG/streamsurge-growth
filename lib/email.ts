@@ -1,62 +1,83 @@
 import { resend } from "./resend";
 
 export async function sendProjectStartedEmail(email: string) {
-  return resend.emails.send({
-    from: "StreamSurge <noreply@YOURDOMAIN.COM>",
-    to: email,
-    subject: "✅ Your StreamSurge Project Has Started",
-    html: `
-      <div style="font-family:Arial;padding:40px">
+  try {
+    const response = await resend.emails.send({
+      from: "StreamSurge <onboarding@resend.dev>",
+      to: email,
+      subject: "🚀 Your StreamSurge Project Has Started",
+      html: `
+        <div style="font-family:Arial;padding:40px">
 
-        <h2>Welcome to StreamSurge 🚀</h2>
+          <h1>🚀 Project Started</h1>
 
-        <p>Your project has officially started.</p>
+          <p>Thank you for choosing <strong>StreamSurge</strong>.</p>
 
-        <p><strong>Status:</strong> 🟢 In Progress</p>
+          <p>Your Stream Audit has officially started.</p>
 
-        <p><strong>Estimated Delivery:</strong> 4–6 Hours</p>
+          <hr />
 
-        <p><strong>Assigned Developer:</strong> STREAMSURGE.DEV</p>
+          <p><strong>Status:</strong> 🟢 In Progress</p>
 
-      </div>
-    `,
-  });
+          <p><strong>Estimated Delivery:</strong> 4–6 Hours</p>
+
+          <p><strong>Assigned Developer:</strong> STREAMSURGE.DEV</p>
+
+        </div>
+      `,
+    });
+
+    console.log("START EMAIL SENT:", response);
+
+    return response;
+  } catch (error) {
+    console.error("START EMAIL ERROR:", error);
+    throw error;
+  }
 }
 
 export async function sendProjectCompletedEmail(email: string) {
-  return resend.emails.send({
-    from: "StreamSurge <noreply@YOURDOMAIN.COM>",
-    to: email,
-    subject: "🎉 Your StreamSurge Project is Complete",
-    html: `
-      <div style="font-family:Arial;padding:40px">
+  try {
+    const response = await resend.emails.send({
+      from: "StreamSurge <onboarding@resend.dev>",
+      to: email,
+      subject: "🎉 Your StreamSurge Project Is Complete",
+      html: `
+        <div style="font-family:Arial;padding:40px">
 
-        <h1>🎉 Project Completed</h1>
+          <h1>🎉 Project Completed</h1>
 
-        <p>Your StreamSurge project has been completed successfully.</p>
+          <p>Your StreamSurge audit has been completed.</p>
 
-        <p><strong>Status:</strong> ✅ Completed</p>
+          <p><strong>Status:</strong> ✅ Completed</p>
 
-        <p><strong>Developer:</strong> STREAMSURGE.DEV</p>
+          <p><strong>Developer:</strong> STREAMSURGE.DEV</p>
 
-        <p>Login to your dashboard to download your audit.</p>
+          <br/>
 
-        <a
-          href="https://streamsurge-site.vercel.app/dashboard"
-          style="
-            background:#7c3aed;
-            color:#fff;
-            padding:14px 24px;
-            border-radius:8px;
-            text-decoration:none;
-            display:inline-block;
-            margin-top:20px;
-          "
-        >
-          Open Dashboard
-        </a>
+          <a
+            href="https://streamsurge-growth.vercel.app/dashboard"
+            style="
+              background:#7c3aed;
+              color:white;
+              padding:14px 24px;
+              border-radius:8px;
+              text-decoration:none;
+              display:inline-block;
+            "
+          >
+            Open Dashboard
+          </a>
 
-      </div>
-    `,
-  });
+        </div>
+      `,
+    });
+
+    console.log("COMPLETE EMAIL SENT:", response);
+
+    return response;
+  } catch (error) {
+    console.error("COMPLETE EMAIL ERROR:", error);
+    throw error;
+  }
 }
