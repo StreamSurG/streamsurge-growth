@@ -112,7 +112,7 @@ export async function POST(req: Request) {
       console.error("START EMAIL ERROR:", err);
     }
 
-    return NextResponse.json(
+    console.log("Dashboard URL:", `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?id=${data[0].id}`);return NextResponse.json(
       {
         success: true,
 
