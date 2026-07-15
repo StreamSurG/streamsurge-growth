@@ -1,11 +1,7 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { stripe } from "../../../lib/stripe";
+import { supabaseAdmin } from "../../../lib/supabaseAdmin";
 import { sendProjectStartedEmail } from "../../../lib/email";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
 
 export async function POST(req: Request) {
   try {
@@ -22,20 +18,44 @@ export async function POST(req: Request) {
       goal,
       biggest_challenge,
       notes,
+      session_id,
     } = body;
+
+    // -------------------------------------------------
+    // Verify Stripe Payment (if session_id is provided)
+    // -------------------------------------------------
+
+    let paymentStatus = "Pending";
+
+    if (session_id) {
+      try {
+        const session =
+          await stripe.checkout.sessions.retrieve(session_id);
+
+        if (session.payment_status === "paid") {
+          paymentStatus = "Paid";
+        }
+      } catch (err) {
+        console.error("Stripe Verification Error:", err);
+      }
+    }
 
     const estimatedCompletion = new Date(
       Date.now() + 6 * 60 * 60 * 1000
     ).toISOString();
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from("requirements")
       .insert([
         {
           package: packageName,
+
           platform,
+
           channel_url,
+
           email,
+
           discord,
 
           followers:
@@ -53,10 +73,16 @@ export async function POST(req: Request) {
               : Number(average_viewers),
 
           goal,
+
           biggest_challenge,
+
           notes,
 
+          payment_status: paymentStatus,
+
           status: "In Progress",
+
+          assigned_developer: "STREAMSURGE.DEV",
 
           estimated_completion: estimatedCompletion,
         },
@@ -76,15 +102,24 @@ export async function POST(req: Request) {
     }
 
     try {
-      await sendProjectStartedEmail(email);
-    } catch (emailError) {
-      console.error("Email Error:", emailError);
+      await sendProjectStartedEmail(
+        data[0].email,
+        data[0].package,
+        `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?id=${data[0].id}`,
+        data[0].discord || "Creator"
+      );
+    } catch (err) {
+      console.error("START EMAIL ERROR:", err);
     }
 
     return NextResponse.json(
       {
         success: true,
+
         order: data[0],
+
+        dashboardUrl: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?id=${data[0].id}`,
+
         message: "Project Started Successfully",
       },
       {

@@ -49,8 +49,15 @@ export async function POST(req: Request) {
       );
     }
 
+    // Send completion email
     try {
-      await sendProjectCompletedEmail(project.email);
+      await sendProjectCompletedEmail(
+        project.email,
+        project.audit_url || "",
+        project.discord || "Creator"
+      );
+
+      console.log("Completion email sent successfully.");
     } catch (err) {
       console.error("Email Error:", err);
     }
