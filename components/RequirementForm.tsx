@@ -13,7 +13,6 @@ export default function RequirementForm() {
     searchParams.get("session_id") || "";
 
   const [loading, setLoading] = useState(false);
-
   const [error, setError] = useState("");
 
   const [form, setForm] = useState({
@@ -42,10 +41,10 @@ export default function RequirementForm() {
       | React.ChangeEvent<HTMLSelectElement>
       | React.ChangeEvent<HTMLTextAreaElement>
   ) {
-    setForm({
-      ...form,
+    setForm((prev) => ({
+      ...prev,
       [e.target.name]: e.target.value,
-    });
+    }));
   }
 
   async function handleSubmit(
@@ -56,53 +55,36 @@ export default function RequirementForm() {
     if (loading) return;
 
     setLoading(true);
-
     setError("");
 
     try {
-      const response = await fetch(
-        "/api/requirements",
-        {
-          method: "POST",
+      const response = await fetch("/api/requirements", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...form,
+          session_id: sessionId,
+        }),
+      });
 
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
+      const result = await response.json();
 
-          body: JSON.stringify({
-            ...form,
-            session_id: sessionId,
-          }),
-        }
-      );
-
-      const result =
-        await response.json();
-
-      if (
-        !response.ok ||
-        !result.success
-      ) {
+      if (!response.ok || !result.success) {
         setError(
-          result.message ||
-            "Something went wrong."
+          result.message || "Something went wrong."
         );
-
         setLoading(false);
-
         return;
       }
 
-      window.location.href =
-  `/requirements/success?dashboard=${encodeURIComponent(
-    result.dashboardUrl
-  )}`;
-    } catch {
-      setError(
-        "Unable to connect to the server."
-      );
-
+      window.location.href = `/requirements/success?dashboard=${encodeURIComponent(
+        result.dashboardUrl
+      )}`;
+    } catch (error) {
+      console.error(error);
+      setError("Unable to connect to the server.");
       setLoading(false);
     }
   }
@@ -117,8 +99,7 @@ export default function RequirementForm() {
       </h2>
 
       <p className="mt-3 text-gray-400">
-        Complete this form so we can begin
-        immediately.
+        Complete this form so we can begin immediately.
       </p>
 
       {error && (
@@ -127,7 +108,9 @@ export default function RequirementForm() {
         </div>
       )}
 
-      <div className="mt-8 grid gap-6 md:grid-cols-2">        <input
+      <div className="mt-8 grid gap-6 md:grid-cols-2">
+
+        <input
           name="email"
           value={form.email}
           onChange={handleChange}
@@ -151,25 +134,13 @@ export default function RequirementForm() {
           className="rounded-xl bg-white/5 p-4 text-white outline-none"
           required
         >
-          <option value="">
-            Select Platform
-          </option>
-
-          <option value="Twitch">
-            Twitch
-          </option>
-
-          <option value="Kick">
-            Kick
-          </option>
-
-          <option value="YouTube">
-            YouTube
-          </option>
+          <option value="">Select Platform</option>
+          <option value="Twitch">Twitch</option>
+          <option value="Kick">Kick</option>
+          <option value="YouTube">YouTube</option>
         </select>
 
         <div className="rounded-xl border border-purple-500/20 bg-purple-500/10 p-4">
-
           <p className="text-sm text-gray-400">
             Selected Package
           </p>
@@ -183,7 +154,6 @@ export default function RequirementForm() {
               ✅ Stripe payment verified
             </p>
           )}
-
         </div>
 
         <input
@@ -241,7 +211,6 @@ export default function RequirementForm() {
       </div>
 
       <div className="mt-8 rounded-2xl border border-green-500/20 bg-green-500/10 p-5">
-
         <h3 className="text-lg font-bold text-green-400">
           Package Confirmation
         </h3>
@@ -249,10 +218,12 @@ export default function RequirementForm() {
         <p className="mt-2 text-gray-300">
           You are submitting requirements for the
           <span className="ml-2 font-bold text-white">
+            {" "}
             {selectedPackage}
-          </span>
-          {" "}package.
-        </p>      </div>
+          </span>{" "}
+          package.
+        </p>
+      </div>
 
       <button
         type="submit"
@@ -261,11 +232,8 @@ export default function RequirementForm() {
       >
         {loading
           ? "🚀 Saving Your Project..."
-          : sessionId
-          ? `🚀 Submit ${selectedPackage} Requirements`
           : `🚀 Submit ${selectedPackage} Requirements`}
       </button>
-
     </form>
   );
 }

@@ -1,7 +1,6 @@
 import { resend } from "./resend";
 import { emailTemplate } from "./emailTemplate";
 
-const WEBSITE = "https://streamsurge-growth.vercel.app";
 const DEVELOPER = "STREAMSURGE.DEV";
 
 export async function sendProjectStartedEmail(
@@ -10,19 +9,17 @@ export async function sendProjectStartedEmail(
   dashboardUrl: string,
   customerName = "Creator"
 ) {
-  console.log("================================");
-  console.log("START EMAIL");
+  console.log("========== PROJECT START EMAIL ==========");
   console.log("Recipient:", email);
-  console.log("================================");
 
   const response = await resend.emails.send({
     from: "StreamSurge <onboarding@resend.dev>",
     to: email,
-    subject: `🚀 Your ${packageName} Has Started`,
+    subject: `🚀 Your ${packageName} Project Has Started`,
 
     html: emailTemplate({
       title: `${packageName} Started`,
-      subtitle: `Your ${packageName} is now underway.`,
+      subtitle: `Your project has officially entered production.`,
       customerName,
 
       status: "🟢 In Progress",
@@ -31,97 +28,72 @@ export async function sendProjectStartedEmail(
 
       delivery: "4–6 Hours",
 
-      progressStep: 3,
+      progressStep: 2,
 
       buttonText: "Open My Dashboard",
 
-buttonUrl: dashboardUrl,
+      buttonUrl: dashboardUrl,
 
-      message: `Our development team has officially started your ${packageName}. We are reviewing your project and preparing personalized recommendations to help you grow faster.`,
+      message:
+        "Our team has received your project requirements and has officially started working on your order. You can monitor progress anytime from your personal dashboard.",
     }),
   });
 
-  console.log("START EMAIL RESPONSE:");
   console.log(response);
-  console.log("================================");
 
   return response;
 }
 
 export async function sendProjectCompletedEmail(
   email: string,
-  auditUrl: string,
   packageName: string,
+  reportUrl: string,
   customerName = "Creator"
 ) {
-  console.log("================================");
-  console.log("COMPLETION EMAIL");
-  console.log("Recipient:", email);
-  console.log("================================");
+  const response = await resend.emails.send({
+    from: "StreamSurge <onboarding@resend.dev>",
+    to: email,
+    subject: `🎉 ${packageName} Completed`,
 
-  try {
-    const response = await resend.emails.send({
-      from: "StreamSurge <onboarding@resend.dev>",
-      to: email,
-      subject: `🎉 Your ${packageName} Is Complete`,
+    html: emailTemplate({
+      title: `${packageName} Completed`,
+      subtitle: "Your report is ready.",
 
-      html: emailTemplate({
-        title: `${packageName} Completed`,
+      customerName,
 
-        subtitle: `Your ${packageName} has been completed successfully.`,
+      status: "✅ Completed",
 
-        customerName,
+      developer: DEVELOPER,
 
-        status: "✅ Completed",
+      delivery: "Delivered",
 
-        developer: DEVELOPER,
+      progressStep: 4,
 
-        delivery: "Delivered",
+      buttonText: "Download My Report",
 
-        progressStep: 4,
+      buttonUrl: reportUrl,
 
-        buttonText: "📄 Download My Report",
+      message:
+        "Your personalized StreamSurge report is now available. Click below to download it.",
+    }),
+  });
 
-        buttonUrl: auditUrl,
-
-        message: `Congratulations! Your ${packageName} has been completed successfully by the StreamSurge team. Your personalized report is now ready. Click the button below to download your completed report instantly.`,
-      }),
-    });
-
-    console.log("================================");
-    console.log("COMPLETION EMAIL RESPONSE");
-    console.log(response);
-    console.log("================================");
-
-    return response;
-  } catch (error) {
-    console.log("================================");
-    console.log("COMPLETION EMAIL ERROR");
-    console.error(error);
-    console.log("================================");
-
-    throw error;
-  }
+  return response;
 }
 
 export async function sendReviewRequestEmail(
   email: string,
   customerName = "Creator"
 ) {
-  console.log("================================");
-  console.log("REVIEW EMAIL");
-  console.log("Recipient:", email);
-  console.log("================================");
-
   const response = await resend.emails.send({
     from: "StreamSurge <onboarding@resend.dev>",
     to: email,
     subject: "⭐ We'd Love Your Feedback",
 
     html: emailTemplate({
-      title: "Thank You",
+      title: "Thank You!",
 
-      subtitle: "We appreciate your trust in StreamSurge.",
+      subtitle: "We appreciate working with you.",
 
       customerName,
 
@@ -138,13 +110,9 @@ export async function sendReviewRequestEmail(
       buttonUrl: "https://www.fiverr.com/",
 
       message:
-        "Thank you for choosing StreamSurge. Your feedback helps us improve and allows other creators to confidently choose our services. If you enjoyed working with us, we'd truly appreciate a review.",
+        "If you enjoyed working with StreamSurge, we'd truly appreciate your feedback.",
     }),
   });
-
-  console.log("REVIEW EMAIL RESPONSE:");
-  console.log(response);
-  console.log("================================");
 
   return response;
 }

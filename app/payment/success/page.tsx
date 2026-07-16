@@ -14,7 +14,7 @@ export default function PaymentSuccessPage() {
     searchParams.get("session_id") || "";
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-black px-6 text-white">
+    <main className="min-h-screen bg-black flex items-center justify-center px-6 text-white">
 
       <div className="w-full max-w-xl rounded-3xl border border-green-500/20 bg-[#101010] p-10 text-center">
 
@@ -28,7 +28,6 @@ export default function PaymentSuccessPage() {
         </h1>
 
         <p className="mt-6 leading-8 text-gray-300">
-
           Thank you!
 
           <br /><br />
@@ -40,20 +39,17 @@ export default function PaymentSuccessPage() {
           </span>
 
           package has been received successfully.
-
         </p>
 
         <p className="mt-6 text-gray-400">
-
-          Complete your project requirements so our team can begin immediately.
-
+          Continue to submit your project requirements.
         </p>
 
         <Link
           href={`/requirements?package=${encodeURIComponent(
             packageName
           )}&session_id=${encodeURIComponent(sessionId)}`}
-          className="mt-10 block rounded-2xl bg-gradient-to-r from-purple-600 to-fuchsia-600 py-4 font-bold text-white transition hover:opacity-90"
+          className="mt-10 block rounded-2xl bg-gradient-to-r from-purple-600 to-fuchsia-600 py-4 font-bold text-white hover:opacity-90"
         >
           Continue →
         </Link>

@@ -16,7 +16,7 @@ export async function GET(req: Request) {
       return NextResponse.json(
         {
           success: false,
-          message: "Project id is required.",
+          message: "Project ID is required.",
         },
         {
           status: 400,
@@ -24,13 +24,13 @@ export async function GET(req: Request) {
       );
     }
 
-    const { data: project, error } = await supabase
+    const { data, error } = await supabase
       .from("requirements")
       .select("*")
       .eq("id", id)
       .single();
 
-    if (error || !project) {
+    if (error || !data) {
       return NextResponse.json(
         {
           success: false,
@@ -44,7 +44,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json({
       success: true,
-      project,
+      project: data,
     });
 
   } catch (error) {

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { stripe } from "../../../lib/stripe";
+import { stripe } from "@/lib/stripe";
 
 const APP_URL =
   process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
@@ -12,17 +12,20 @@ const prices: Record<
   }
 > = {
   Audit: {
-    amount: 2400,
+    amount: 2900,
     description: "Professional Stream Audit",
   },
+
   Basic: {
     amount: 9900,
     description: "Basic Growth Package",
   },
+
   Advanced: {
     amount: 24900,
     description: "Advanced Growth Package",
   },
+
   Premium: {
     amount: 49900,
     description: "Premium Growth Package",
@@ -57,18 +60,20 @@ export async function POST(req: Request) {
           price_data: {
             currency: "usd",
 
+            unit_amount: selected.amount,
+
             product_data: {
               name: `StreamSurge ${packageName}`,
               description: selected.description,
             },
-
-            unit_amount: selected.amount,
           },
         },
       ],
 
       success_url:
-        `${APP_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}&package=${encodeURIComponent(packageName)}`,
+        `${APP_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}&package=${encodeURIComponent(
+          packageName
+        )}`,
 
       cancel_url:
         `${APP_URL}/payment/cancel`,
@@ -78,8 +83,9 @@ export async function POST(req: Request) {
       success: true,
       url: session.url,
     });
+
   } catch (error) {
-    console.error(error);
+    console.error("Stripe Checkout Error:", error);
 
     return NextResponse.json(
       {
