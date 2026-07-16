@@ -1,13 +1,17 @@
-"use client";
-
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 
-export default function SuccessPage() {
-  const searchParams = useSearchParams();
+type Props = {
+  searchParams: Promise<{
+    dashboard?: string;
+  }>;
+};
 
-  const dashboardUrl =
-    searchParams.get("dashboard") || "/";
+export default async function SuccessPage({
+  searchParams,
+}: Props) {
+  const params = await searchParams;
+
+  const dashboardUrl = params.dashboard || "/";
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-black text-white">
@@ -23,7 +27,7 @@ export default function SuccessPage() {
 
         <Link
           href={dashboardUrl}
-          className="mt-10 inline-block rounded-xl bg-purple-600 px-8 py-4 font-bold"
+          className="mt-10 inline-block rounded-xl bg-purple-600 px-8 py-4 font-bold hover:opacity-90"
         >
           Go To Dashboard
         </Link>
