@@ -14,6 +14,12 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
+    console.log("========================================");
+    console.log("NEW REQUIREMENT SUBMISSION");
+    console.log("========================================");
+    console.log("Request Body:", body);
+    console.log("Email Received:", body.email);
+
     const {
       package: packageName,
       platform,
@@ -29,14 +35,20 @@ export async function POST(req: Request) {
     } = body;
 
     if (!packageName || !platform || !channel_url || !email) {
+      console.log("❌ Missing required fields");
+
       return NextResponse.json(
         {
           success: false,
           message: "Missing required fields.",
         },
-        { status: 400 }
+        {
+          status: 400,
+        }
       );
     }
+
+    console.log("Saving project to Supabase...");
 
     const { data, error } = await supabase
       .from("requirements")
@@ -53,7 +65,8 @@ export async function POST(req: Request) {
             : Number(followers),
 
         average_viewers:
-          average_viewers === "" || average_viewers == null
+          average_viewers === "" ||
+          average_viewers == null
             ? null
             : Number(average_viewers),
 
@@ -73,7 +86,10 @@ export async function POST(req: Request) {
       .single();
 
     if (error) {
-      console.error("SUPABASE ERROR:", error);
+      console.error("========================================");
+      console.error("SUPABASE ERROR");
+      console.error(error);
+      console.error("========================================");
 
       return NextResponse.json(
         {
@@ -86,21 +102,37 @@ export async function POST(req: Request) {
       );
     }
 
-    const dashboardUrl = `${APP_URL}/dashboard/${data.id}`;
+    console.log("✅ Saved Successfully");
+    console.log("Database Email:", data.email);
 
-console.log("Dashboard URL:", dashboardUrl);
+    const dashboardUrl =
+      `${APP_URL}/dashboard/${data.id}`;
 
-try {
-  await sendProjectStartedEmail(
-    email,
-    packageName,
-    dashboardUrl,
-    discord || "Creator"
-  );
+    console.log("Dashboard URL:", dashboardUrl);
 
-      console.log("✅ Project Started Email Sent");
+    try {
+      console.log("========================================");
+      console.log("SENDING EMAIL");
+      console.log("Recipient:", email);
+      console.log("Package:", packageName);
+      console.log("Dashboard:", dashboardUrl);
+      console.log("========================================");
+
+      const emailResponse =
+        await sendProjectStartedEmail(
+          email,
+          packageName,
+          dashboardUrl,
+          discord || "Creator"
+        );
+
+      console.log("✅ Email Sent");
+      console.log(emailResponse);
     } catch (emailError) {
-      console.error("❌ Email Error:", emailError);
+      console.error("========================================");
+      console.error("EMAIL ERROR");
+      console.error(emailError);
+      console.error("========================================");
     }
 
     return NextResponse.json({
@@ -110,7 +142,10 @@ try {
     });
 
   } catch (err) {
-    console.error("SERVER ERROR:", err);
+    console.error("========================================");
+    console.error("SERVER ERROR");
+    console.error(err);
+    console.error("========================================");
 
     return NextResponse.json(
       {
